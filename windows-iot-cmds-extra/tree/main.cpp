@@ -15,9 +15,6 @@
 #include <direct.h>
 #include <windows.h>
 #include <strsafe.h>
-#include <shlwapi.h>
-
-#pragma comment(lib, "shlwapi.lib")
 
 #define STR_MAX 2048
 
