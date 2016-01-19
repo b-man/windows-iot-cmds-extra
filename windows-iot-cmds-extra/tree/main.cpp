@@ -50,18 +50,18 @@ static VOID PrintUsage(VOID)
 * @return
 * true if folder has sub folders, else will return false
 */
-static BOOL HasSubFolder(const wchar_t *strPath1)
+static BOOL HasSubFolder(const wchar_t *strPath)
 {
 	BOOL ret = FALSE;
 	WIN32_FIND_DATA FindFileData;
 	HANDLE hFind = NULL;
-	static wchar_t strPath[STR_MAX] = L"";
-	ZeroMemory(strPath, sizeof(strPath));
+	static wchar_t folderPath[STR_MAX] = L"";
+	ZeroMemory(folderPath, sizeof(folderPath));
 
-	wcscat_s(strPath, STR_MAX, strPath1);
-	wcscat_s(strPath, STR_MAX, L"\\*.");
+	wcscat_s(folderPath, STR_MAX, strPath);
+	wcscat_s(folderPath, STR_MAX, L"\\*.");
 
-	hFind = FindFirstFile(strPath, &FindFileData);
+	hFind = FindFirstFile(folderPath, &FindFileData);
 	do
 	{
 		if (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
@@ -369,11 +369,12 @@ int wmain(int argc, wchar_t* argv[])
 		}
 	}
 
+	/* display banner */
 	GetVolumeInformation(NULL, dwName, MAX_PATH, &dwSerial, NULL, NULL, NULL, 0);
 	wprintf(L"Folder PATH listing for volume %s\n", dwName);
 	wprintf(L"Volume serial number is %X-%X\n", dwSerial >> 16, dwSerial & 0xffff);
 
-	if (bSetPath == TRUE)
+	if (bSetPath == TRUE) /* if a path is specified, display absolute path */
 	{
 		CharUpper(specifiedPath);
 
@@ -389,7 +390,7 @@ int wmain(int argc, wchar_t* argv[])
 			return 0;
 		}
 	}
-	else
+	else /* if no path is specified, display drive letter and relative path */
 	{
 		wprintf(L"%c:.\n", (_getdrive() + 'A' - 1));
 	}
