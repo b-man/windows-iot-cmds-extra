@@ -26,6 +26,7 @@ BOOL bShowFiles = FALSE;
 /* if this flag is true, ASCII characters will be used instead of UNICODE ones */
 BOOL bUseAscii = FALSE;
 
+/* if this flag is true, a path has been specified and folders/files will be listed from there */
 BOOL bSetPath = FALSE;
 
 static VOID PrintUsage(VOID)
@@ -52,7 +53,8 @@ static BOOL HasSubFolder(const wchar_t *strPath)
 	BOOL ret = FALSE;
 	WIN32_FIND_DATA FindFileData;
 	HANDLE hFind = NULL;
-	static wchar_t folderPath[STR_MAX] = L"";
+	wchar_t folderPath[STR_MAX] = L"";
+
 	ZeroMemory(folderPath, sizeof(folderPath));
 
 	wcscat_s(folderPath, STR_MAX, strPath);
@@ -317,10 +319,10 @@ GetDirectoryStructure(wchar_t* strPath, UINT width, const wchar_t* prevLine)
 int wmain(int argc, wchar_t* argv[])
 {
 	DWORD dwSerial = 0;
-	wchar_t dwName[MAX_PATH] = { 0 };
+	wchar_t dwName[MAX_PATH] = L"";
 	wchar_t* strPath = NULL;
 	DWORD sz = 0;
-	wchar_t specifiedPath[MAX_PATH] = { 0 };
+	wchar_t specifiedPath[MAX_PATH] = L"";
 	int i;
 
 	/* this is necessary if tree is called in non-ascii mode (default) */
@@ -392,13 +394,10 @@ int wmain(int argc, wchar_t* argv[])
 		wprintf(L"%c:.\n", (_getdrive() + 'A' - 1));
 	}
 
+	/* get the current directory */
 	sz = GetCurrentDirectory(0, NULL);
 	strPath = (wchar_t*)malloc(sizeof(wchar_t) * sz);
-
-	/* get the current directory */
 	GetCurrentDirectory(sz, strPath);
-
-	strPath = CharUpper(strPath);
 
 	/* get the sub directories within this current folder */
 	GetDirectoryStructure(strPath, 1, L"          ");
