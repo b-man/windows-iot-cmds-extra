@@ -298,7 +298,7 @@ GetDirectoryStructure(wchar_t* strPath, UINT width, const wchar_t* prevLine)
 			if (arrFile == NULL)
 				exit(-1);
 
-			wcscpy_s(arrFile[arrFilesz - 1].cFileName, STR_MAX, L" ");
+			wcscpy_s(arrFile[arrFilesz - 1].cFileName, MAX_PATH, L" ");
 		}
 
 		DrawTree(strPath, arrFile, arrFilesz, width, prevLine, FALSE);
@@ -389,6 +389,10 @@ int wmain(int argc, wchar_t* argv[])
 			return 0;
 		}
 	}
+	else
+	{
+		wprintf(L"%c:.\n", (_getdrive() + 'A' - 1));
+	}
 
 	sz = GetCurrentDirectory(0, NULL);
 	strPath = (wchar_t*)malloc(sizeof(wchar_t) * sz);
@@ -397,10 +401,6 @@ int wmain(int argc, wchar_t* argv[])
 	GetCurrentDirectory(sz, strPath);
 
 	strPath = CharUpper(strPath);
-
-	/* to avoid redundancy... */
-	if (bSetPath == FALSE)
-		wprintf(L"%c:.\n", (_getdrive() + 'A' - 1));
 
 	/* get the sub directories within this current folder */
 	GetDirectoryStructure(strPath, 1, L"          ");
